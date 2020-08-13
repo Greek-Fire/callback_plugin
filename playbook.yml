@@ -1,5 +1,3 @@
-#!/usr/bin/env ansible-playbook
-#
 ---
 - name: test for missing hosts using callback 
   hosts: all 
