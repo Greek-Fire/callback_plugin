@@ -1,37 +1,19 @@
 ---
-- name: test for missing hosts using callback 
-  hosts: all 
+- hosts: all 
   gather_facts: False
   tasks:
-  - debug:
-      msg: "{{ groups.all }}"
+  - name: check for missing hosts
+    blocks:
+    - name: limit
+      set_fact:
+        bb: '{{ groups.all }}'
+        cc: '{{ ansible_limit.split(",") | difference(groups.all) }}'
+    - name: check if host exist in inventory
+      fail:
+         msg: "Host: {{ cc | join(',') }} does not exist in inventory "
+      ignore_errors: true
+      when: cc not in bb  and cc | length > 0
     run_once: true
-
-  - debug:
-      msg: "{{ ansible_limit }}"
-    run_once: true
-
-  - name: limit
-    set_fact:
-      bb: '{{ groups.all }}'
-      cc: '{{ ansible_limit.split(",") | difference(groups.all) }}'
-    run_once: true
-
-  - name: check if host exist in inventory
-    fail:
-        msg: "Host: {{ cc | join(',') }} does not exist in inventory "
-    run_once: true
-    ignore_errors: true
-    when: cc not in bb  and cc | length > 0
-
-- name: call the callback plugin with a failed task
-  hosts: all
-  gather_facts: False
-  tasks:
-
-  - debug:
-      var: test
-
   - name: assert that output is a
     assert:
       that: output == 'a'
