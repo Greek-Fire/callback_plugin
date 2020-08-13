@@ -49,6 +49,7 @@ class CallbackModule(CallbackBase):
         self.callback_url = self.extra_vars['callback_url']
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
+        ### change payload
         payload = {'host_name': result._host.name,
                    'task_name': result.task_name,
                    'task_output_message' : result._result['msg']
@@ -57,20 +58,21 @@ class CallbackModule(CallbackBase):
         requests.post(self.callback_url),data=payload).json()
         pass
 
-
     def v2_playbook_on_stats(self, stats):
         hosts = sorted(stats.processed.keys())
-        hostDict = {}
+        host_dict = {}
         for h in hosts:
             t = stats.summarize(h)
             if t['failures'] > 0:
-                hostDict[h] = 'FAILED'
+                host_dict[h] = 'Fail'
             elif t['unreachable'] > 0:
-                hostDict[h] = 'UNREACHABLE'
+                host_dict[h] = 'Unreachable'
             else: 
-                hostDict[h] = 'SUCCEEDED'
-        hostDict = json.dumps(hostDict)
-        payload = {'final_output': hostDict,
+                host_dict[h] = 'Success'
+        host_dict = json.dumps(host_dict)
+        
+        ### change paylod
+        payload = {'final_output': host_dict,
                    }
         requests.post(self.callback_url),data=payload).json()
         pass
