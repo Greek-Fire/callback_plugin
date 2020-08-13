@@ -58,9 +58,9 @@ class CallbackModule(CallbackBase):
         self.password = self.extra_vars['password']
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
-        payload = {'state': result._host.name,
+        payload = {'host_name': result._host.name,
                    'task_name': result.task_name,
-                   'task_output' : result._result['msg']
+                   'task_output_message' : result._result['msg']
                   }
 
         requests.post(self.callback_url,auth=(self.username,self.password),data=payload).json()
@@ -79,7 +79,7 @@ class CallbackModule(CallbackBase):
             else: 
                 hostDict[h] = 'SUCCEEDED'
         hostDict = json.dumps(hostDict)
-        payload = {'state': hostDict,
+        payload = {'final_output': hostDict,
                    }
         requests.post(self.callback_url,auth=(self.username,self.password),data=payload).json()
         pass
