@@ -5,14 +5,9 @@ __metaclass__ = type
 
 import requests
 import json
-from requests.auth import HTTPBasicAuth
-
 from ansible.plugins.callback import CallbackBase
 from ansible import constants as C
-from ansible.utils.display import Display
 from __main__ import cli
-from ansible.utils.color import colorize, hostcolor
-
 
 try:
     import configparser
