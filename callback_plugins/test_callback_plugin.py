@@ -20,7 +20,7 @@ except ImportError:
     import ConfigParser as configparser
 
 DOCUMENTATION = '''
-    callback: example_callback_plugin
+    callback: test_callback_plugin
     type: notification
     short_description: Send callback on various runners to an API endpoint.
     description:
@@ -29,8 +29,6 @@ DOCUMENTATION = '''
         as the plugin.
     requirements:
       - python requests library
-      - HTTPBasicAuth library from python requests.auth
-      - ConfigParser for reading configuration file
     '''
 
 class CallbackModule(CallbackBase):
@@ -41,7 +39,7 @@ class CallbackModule(CallbackBase):
 
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'notification'
-    CALLBACK_NAME = 'example_callback_plugin'
+    CALLBACK_NAME = 'test_callback_plugin'
 
     def __init__(self, *args, **kwargs):
         super(CallbackModule, self).__init__()
@@ -54,8 +52,6 @@ class CallbackModule(CallbackBase):
         self.play = play
         self.extra_vars = self.play.get_variable_manager().extra_vars
         self.callback_url = self.extra_vars['callback_url']
-        self.username = self.extra_vars['username']
-        self.password = self.extra_vars['password']
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
         payload = {'host_name': result._host.name,
@@ -63,7 +59,7 @@ class CallbackModule(CallbackBase):
                    'task_output_message' : result._result['msg']
                   }
 
-        requests.post(self.callback_url,auth=(self.username,self.password),data=payload).json()
+        requests.post(self.callback_url),data=payload).json()
         pass
 
 
@@ -81,5 +77,5 @@ class CallbackModule(CallbackBase):
         hostDict = json.dumps(hostDict)
         payload = {'final_output': hostDict,
                    }
-        requests.post(self.callback_url,auth=(self.username,self.password),data=payload).json()
+        requests.post(self.callback_url),data=payload).json()
         pass
